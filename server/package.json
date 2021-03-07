@@ -8,16 +8,32 @@
     "test": "NODE_ENV=test ./node_modules/.bin/mocha --exit --timeout 30000"
   },
   "dependencies": {
+    "argon2": "0.27.1",
+    "body-parser": "1.19.0",
+    "concurrently": "6.0.0",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "express": "4.17.1",
+    "express-jwt": "6.0.0",
     "http-errors": "~1.8.0",
+    "jsonwebtoken": "8.5.1",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.6",
+    "pg": "8.5.1",
+    "postgres": "1.0.2",
+    "sequelize": "6.5.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^8.2.1"
-  }
+  },
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
