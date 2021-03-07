@@ -1,15 +1,13 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
+import { useEffect } from "react";
+import { Button, CssBaseline, TextField, Paper }from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 
 export default function Dashboard() {
   const history = useHistory();
 
-  React.useEffect(() => {
-    const user = localStorage.getItem("user");
+  useEffect(() => {
+    const user = localStorage.getItem("token");
     if (!user) history.push("/signup");
   }, []);
 
@@ -17,10 +15,10 @@ export default function Dashboard() {
     <>
       {/* For testing purposes right now, ignore styling */}
       <p>Dashboard</p>
-      <p>User: {JSON.stringify(localStorage.getItem("user"))}</p>
+      <p>User: {JSON.stringify(localStorage.getItem("token"))}</p>
       <button
         onClick={() => {
-          localStorage.removeItem("user");
+          localStorage.removeItem("token");
           history.push("/login");
         }}
       >
