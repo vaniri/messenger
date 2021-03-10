@@ -12,7 +12,7 @@ const useGreetingPagesStyle = makeStyles(theme => ({
       paddingBottom: 20,
       color: "#000000",
       fontWeight: 700,
-      fontFamily: "Open Sans"
+      fontFamily: "Open Sans",
     },
     heroText: {
       fontSize: 26,
@@ -37,11 +37,11 @@ const useGreetingPagesStyle = makeStyles(theme => ({
     },
     buttonHeader: {
       display: "flex",
-      alignItems: "flex-start",
+      alignItems: "flex-end",
       justifyContent: "space-between",
       flexDirection: "column",
       bgcolor: "background.paper",
-      minHeight: "100vh",
+      // minHeight: "100vh",
       paddingTop: 23
     },
     accBtn: {
@@ -72,7 +72,7 @@ const useGreetingPagesStyle = makeStyles(theme => ({
       padding: 24,
       display: "flex",
       justifyContent: "center",
-      alignItems: "center",
+      alignItems: "flex-end",
       minHeight: "100vh",
       flexDirection: "column",
       maxWidth: 900,
@@ -80,7 +80,8 @@ const useGreetingPagesStyle = makeStyles(theme => ({
     },
     form: {
       width: "100%", // Fix IE 11 issue.
-      marginTop: theme.spacing(1)
+      marginTop: theme.spacing(1),
+      textAlign: "center"
     },
     label: { fontSize: 19, color: "rgb(0,0,0,0.4)", paddingLeft: "5px" },
     submit: {
@@ -97,7 +98,7 @@ const useGreetingPagesStyle = makeStyles(theme => ({
     inputs: {
       marginTop: ".8rem",
       height: "2rem",
-      padding: "5px"
+      padding: ".32rem"
     },
     link: { textDecoration: "none", display: "flex", flexWrap: "nowrap" },
     forgot: {
