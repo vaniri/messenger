@@ -10,22 +10,21 @@ import GreetingSideBar from "../components/GreetingSideBar";
 import ButtonHeader from "../components/ButtonHeader";
 import SnackBar from "../components/SnackBar";
 
-const Register = () => {
-
+const Register = ({ setUserId, setUsername, setUserImage }) => {
   const classes = useGreetingPagesStyle();
 
   const signUp = async ({ username, email, password }) => {
-    const res = await fetch('http://localhost:3001/user/', {
+    const res = await fetch('/user/', {
       method: 'POST',
       body: JSON.stringify({ username, email, password }),
       headers: { 'Content-Type': 'application/json' }
     });
 
     if (res.status === 201) {
-      const { userId, token } = await res.json();
-      localStorage.setItem("userId", userId);
-      localStorage.setItem("username", username);
-      localStorage.setItem("token", token);
+      const { userId, userImage } = await res.json();
+      setUserId(userId);
+      setUsername(username);
+      setUserImage(userImage);
     } else if (res.status === 409) {
       throw new Error("User already exists");
     } else {
@@ -52,7 +51,7 @@ const Register = () => {
           />
         </Grid>
         <Grid container className={classes.box}>
-          <Grid container xs={9}>
+          <Grid item container xs={9}>
             <Grid container>
               <Typography
                 className={classes.welcome}
@@ -168,7 +167,6 @@ const Register = () => {
               </Formik>
             </Grid>
           </Grid>
-          <Grid p={1} alignSelf="center" />
         </Grid>
         <SnackBar
           setOpen={setOpen}

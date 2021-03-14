@@ -11,22 +11,21 @@ import ButtonHeader from "../components/ButtonHeader";
 import SnackBar from "../components/SnackBar";
 
 
-const Login = () => {
+const Login = ({ setUserId, setUsername, setUserImage }) => {
   const classes = useGreetingPagesStyle();
 
   const login = async ({ email, password }) => {
-    const res = await fetch('http://localhost:3001/user/login', {
+    const res = await fetch('/user/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
       headers: { 'Content-Type': 'application/json' }
     });
 
     if (res.status === 200) {
-      const { userId, username, userImage, token } = await res.json();
-      localStorage.setItem("userId", userId);
-      localStorage.setItem("username", username);
-      localStorage.setItem("userImage", userImage);
-      localStorage.setItem("token", token);
+      const { userId, username, userImage } = await res.json();
+      setUserId(userId);
+      setUsername(username);
+      setUserImage(userImage);
     } else if (res.status === 404) {
       throw new Error("User not found");
     } else if (res.status === 401) {
@@ -55,7 +54,7 @@ const Login = () => {
           />
         </Grid>
         <Grid container className={classes.box}>
-          <Grid container xs={9}>
+          <Grid item container xs={9}>
             <Grid container>
               <p className={classes.welcome} component="h1" variant="h5">
                 Welcome back!
@@ -144,7 +143,6 @@ const Login = () => {
               </Formik>
             </Grid>
           </Grid>
-          <Grid p={1} alignSelf="center" />
         </Grid>
         <SnackBar
           open={open}
