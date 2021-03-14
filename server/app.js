@@ -14,13 +14,6 @@ app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(join(__dirname, "public")));
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Methods", "GET, OPTIONS, POST, DELETE, PATCH");
-  next();
-});
-
 app.use('/', require('./routes/index'));
 
 // catch 404 and forward to error handler

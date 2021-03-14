@@ -1,9 +1,11 @@
 const jwt = require('jsonwebtoken');
 
-const jwtSecret = "this is my very important secret";
-
-function generateToken(userId) {
-    return jwt.sign({ userId }, jwtSecret);
+const generateToken = (userId) => {
+    return jwt.sign({ userId }, process.env.JWT_SECRET);
 }
 
-module.exports = { jwtSecret, generateToken };
+const getSecret = () => {
+    return process.env.JWT_SECRET;
+}
+
+module.exports = { generateToken, getSecret };
