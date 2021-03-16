@@ -10,7 +10,7 @@ import GreetingSideBar from "../components/GreetingSideBar";
 import ButtonHeader from "../components/ButtonHeader";
 import SnackBar from "../components/SnackBar";
 
-const Register = ({ setUserId, setUsername, setUserImage }) => {
+const Register = () => {
   const classes = useGreetingPagesStyle();
 
   const signUp = async ({ username, email, password }) => {
@@ -19,15 +19,9 @@ const Register = ({ setUserId, setUsername, setUserImage }) => {
       body: JSON.stringify({ username, email, password }),
       headers: { 'Content-Type': 'application/json' }
     });
-
-    if (res.status === 201) {
-      const { userId, userImage } = await res.json();
-      setUserId(userId);
-      setUsername(username);
-      setUserImage(userImage);
-    } else if (res.status === 409) {
+    if (res.status === 409) {
       throw new Error("User already exists");
-    } else {
+    } else if (res.status !== 201) {
       const { message } = await res.json();
       throw new Error(message);
     }

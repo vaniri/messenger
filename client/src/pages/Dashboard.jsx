@@ -1,13 +1,13 @@
 import React from "react";
+import LogOut from "../components/LogOut";
 
-const Dashboard = ({ userId, username, logout }) => {
+const Dashboard = ({ userInfo }) => {
+  const { userId, username } = userInfo;
   return (
     <>
       {/* For testing purposes right now, ignore styling */}
       <p>Dashboard for {username} {userId}</p>
-      <button onClick={logout}>
-        Logout
-      </button>
+      <LogOut />
     </>
   );
 }

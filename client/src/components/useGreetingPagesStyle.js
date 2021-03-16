@@ -41,7 +41,6 @@ const useGreetingPagesStyle = makeStyles(theme => ({
       justifyContent: "space-between",
       flexDirection: "column",
       bgcolor: "background.paper",
-      // minHeight: "100vh",
       paddingTop: 23
     },
     accBtn: {

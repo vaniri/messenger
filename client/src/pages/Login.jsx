@@ -11,7 +11,7 @@ import ButtonHeader from "../components/ButtonHeader";
 import SnackBar from "../components/SnackBar";
 
 
-const Login = ({ setUserId, setUsername, setUserImage }) => {
+const Login = () => {
   const classes = useGreetingPagesStyle();
 
   const login = async ({ email, password }) => {
@@ -20,17 +20,11 @@ const Login = ({ setUserId, setUsername, setUserImage }) => {
       body: JSON.stringify({ email, password }),
       headers: { 'Content-Type': 'application/json' }
     });
-
-    if (res.status === 200) {
-      const { userId, username, userImage } = await res.json();
-      setUserId(userId);
-      setUsername(username);
-      setUserImage(userImage);
-    } else if (res.status === 404) {
+    if (res.status === 404) {
       throw new Error("User not found");
     } else if (res.status === 401) {
       throw new Error("Invalid password");
-    } else {
+    } else if (res.status !== 200) {
       const { message } = await res.json();
       throw new Error(message);
     }
