@@ -9,11 +9,10 @@ const PrivateRoute = ({ component: Component, path, ...rest }) => {
 
     const refreshAuth = async () => {
         const res = await fetch('/user/refresh', { method: 'POST' });
-
         if (res.status === 200) {
-            setSignedIn(true);
             const userData = await res.json();
             setUserInfo(userData);
+            setSignedIn(true);
         } else {
             setSignedIn(false);
             history.push("/login");

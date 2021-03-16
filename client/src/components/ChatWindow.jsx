@@ -1,105 +1,131 @@
-import React from "react";
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { Grid, TextField, InputAdornment, IconButton, ListItemAvatar, List, ListItem, ListItemText, Avatar } from "@material-ui/core";
+import React, { useState, useEffect, useRef } from "react";
+import { Grid, TextField, InputAdornment, IconButton, List, ListItem, ListItemIcon, ListItemText, Avatar } from "@material-ui/core";
 import SendIcon from '@material-ui/icons/Send';
-import useChatPageStyle from './useChatPageStyle';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
+import useChatPageStyle from "../components/useChatPageStyle";
 
-const ChatWindow = () => {
+const ChatWindow = ({ userInfo, selectedUser, reportError }) => {
     const classes = useChatPageStyle();
     const [messageBody, setMessageBody] = useState("");
-    const history = useHistory();
-
-    const messeges = [
-        { from: "jhon", to: "thomas", body: "Hey man, What's up?", data: "09/13/2000", align: "left", image: "" },
-        { from: "jhon", to: "thomas", body: "What a lovelly day!!", data: "09/13/2000", align: "left", image: "" },
-        { from: "jhon", to: "thomas", body: "Totally agree with you!", data: "09/13/2000", align: "left", image: "" },
-        { from: "thomas", to: "jhon", body: "How are you doing?", data: "10/08/2000", align: "right", image: "" },
-        { from: "thomas", to: "jhon", body: "I have no plans for tomorrow", data: "10/08/2000", align: "right", image: "" },
-        { from: "thomas", to: "jhon", body: "We can do it on Fridat!", data: "10/08/2000", align: "right", image: "" }
-    ];
+    const [messages, setMessages] = useState([]);
+    const messagesRef = useRef(null);
 
     const handleCreateMessage = event => {
         const { value } = event.target;
         setMessageBody(value);
     }
 
-    const handlMessageSend = () => {
-        sendMessage();
-    }
-
-    let handleMessagePost = () => {
-        let path = `/postWithComments/${""}`
-        history.push("./");
-    }
-
-    const sendMessage = async () => {
-        try {
-            const res = await fetch("./", {
-                method: 'POST',
-                body: JSON.stringify({ messageBody, to: "", from: "" }),
-                headers: { 'Content-Type': 'application/json' }
-              });
-            if (res.status === "") {
-                console.log("Messahe safe!")
-                handleMessagePost();
-            }
-        } catch (err) {
-            throw(err);
+    const sendMessage = async (event) => {
+        event.preventDefault();
+        const res = await fetch("/conversations/message", {
+            method: 'POST',
+            body: JSON.stringify({ messageBody, receiverId: selectedUser.id }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        if (res.status === 201) {
+            setMessageBody("");
+            getMessages();
+        } else {
+            reportError("Error sending the message");
         }
     }
 
-    return (
-        <Grid item xs={9}>
-            <List className={classes.messageArea}>
-                {messeges.map(message => (
-                    <ListItem key="" style={{ margin: '20px 0' }}>
-                        <Grid container>
-                            <ListItemAvatar>
-                                <Avatar alt={""} src={message.image} />
-                            </ListItemAvatar>
-                            <ListItemText align={message.align} primary={`${message.from} ${message.data}`}></ListItemText>
-                            <Grid item xs={12}>
-                                <ListItemText align={message.align} primary={message.body}></ListItemText>
-                            </Grid>
-                        </Grid>
-                    </ListItem>
-                ))}
-            </List>
+    const getMessages = async () => {
+        if (!selectedUser.id) {
+            return;
+        }
 
-            <Grid container style={{ padding: '20px' }}>
-                <Grid item xs={12} align="">
-                    <form
-                        onSubmit={() => handlMessageSend()}
-                        className={classes.form}
-                        noValidate
-                    >
-                        <TextField
-                            className={classes.textField}
-                            id="outlined-basic-email"
-                            value={messageBody}
-                            placeholder="Type Something"
-                            variant="outlined"
-                            fullWidth
-                            onChange={handleCreateMessage}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="send"
-                                            color="primary"
-                                            type="submit"
+        const res = await fetch(`/conversations/message?to=${selectedUser.id}`);
+        if (res.status === 200) {
+            const messagesData = await res.json();
+            setMessages(messagesData.messages);
+            messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+        } else {
+            reportError("Error fetching")
+        }
+    }
+
+    useEffect(() => getMessages(), [selectedUser]);
+
+    return (
+        <Grid container item xs={9} className={classes.chatContainer}>
+            <Grid xs={12}>
+                {selectedUser.id ?
+                    <Grid xs={12} className={classes.friendUsernameContainer}>
+                        <List>
+                            <ListItem>
+                                <ListItemIcon>
+                                    <Avatar alt={""} src={""} />
+                                </ListItemIcon>
+                                <ListItemText primary={selectedUser.username}></ListItemText>
+                                <ListItemIcon alignItemsFlexEnd="true"> <MoreHorizIcon /></ListItemIcon>
+                            </ListItem>
+                        </List>
+                    </Grid> : ""}
+                <Grid ref={messagesRef} className={classes.messageArea}>
+                    <List>
+                        {messages.map(msg => {
+                            const fromMyself = msg.from === userInfo.userId;
+                            return (
+                                <ListItem key={msg.id} className={`${classes.messageItem} ${fromMyself ? classes.rightAlign : classes.leftAlign}`}>
+                                    <Grid style={{ width: '100%' }}>
+                                        <ListItemText
+                                            className={classes.friendInfo}
+                                            primary={fromMyself ? userInfo.username : selectedUser.username}
                                         >
-                                            <SendIcon />
-                                        </IconButton>
-                                    </InputAdornment>
-                                )
-                            }}
-                        />
-                    </form>
+                                        </ListItemText>
+                                        <ListItemText
+                                            className={classes.friendInfo}
+                                            primary={`${new Date(msg.createdAt).toLocaleString()}`}
+                                        >
+                                        </ListItemText>
+                                        <Grid>
+                                            <ListItemText
+                                                className={`${classes.messageText} ${fromMyself ? classes.rightText : classes.leftText}`}
+                                                primary={msg.body}
+                                            >
+                                            </ListItemText>
+                                        </Grid>
+                                    </Grid>
+                                </ListItem>
+                            )
+                        })}
+                    </List>
                 </Grid>
             </Grid>
-        </Grid>
+            <Grid className={classes.formContainer} xs={12}>
+                <form
+                    onSubmit={(event) => sendMessage(event)}
+                    className={classes.form}
+                    noValidate
+                >
+                    <TextField
+                        className={classes.textField}
+                        id="outlined-basic-email"
+                        value={messageBody}
+                        placeholder="Type Something"
+                        autoFocus={true}
+                        autoComplete="off"
+                        fullWidth={true}
+                        variant="outlined"
+                        onChange={handleCreateMessage}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="send"
+                                        color="secondary"
+                                        type="submit"
+                                    >
+                                        <SendIcon />
+                                    </IconButton>
+                                </InputAdornment>
+                            )
+                        }}
+                    />
+                </form>
+            </Grid>
+        </Grid >
     )
 }
 

@@ -1,5 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { IconButton } from "@material-ui/core";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const LogOut = () => {
     const history = useHistory();
@@ -10,9 +12,14 @@ const LogOut = () => {
     };
 
     return (
-        <button onClick={logout}>
-            Logout
-        </button>
+        <IconButton
+            onClick={logout}
+            aria-label="send"
+            color="secondary"
+            type="submit"
+        >
+            <ExitToAppIcon />
+        </IconButton>
     )
 }
 
