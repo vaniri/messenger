@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 const sequelize = new Sequelize(
-  process.env.JAWSDB_URL || 'postgresql://messenger_user:messenger_password@localhost:5432/messenger_db'
+  process.env.JAWSDB_URL || process.env.LOCAL_CONN_STR
 );
 
 module.exports = sequelize;
