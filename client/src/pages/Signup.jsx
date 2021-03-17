@@ -1,5 +1,4 @@
 import React from "react";
-import { useEffect } from "react";
 import { Button, CssBaseline, TextField, Paper, Grid, Typography } from "@material-ui/core";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -27,9 +26,7 @@ const Register = () => {
     }
   }
 
-  const { handleFormSubmit, redirect, open, setOpen, message } = useHandleAuthorization({ path: "/dashboard", funct: signUp });
-
-  useEffect(() => redirect(), []);
+  const { handleFormSubmit, open, setOpen, message } = useHandleAuthorization({ path: "/dashboard", funct: signUp });
 
   return (
     <Grid container component="main" className={classes.root}>

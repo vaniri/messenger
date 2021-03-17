@@ -1,5 +1,4 @@
 import React from "react";
-import { useEffect } from "react";
 import { Button, CssBaseline, TextField, Paper, Grid, Typography } from "@material-ui/core";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -20,19 +19,15 @@ const Login = () => {
       body: JSON.stringify({ email, password }),
       headers: { 'Content-Type': 'application/json' }
     });
-    if (res.status === 404) {
-      throw new Error("User not found");
-    } else if (res.status === 401) {
-      throw new Error("Invalid password");
+    if (res.status === 404 || res.status === 401) {
+      throw new Error("Wrong credentials");
     } else if (res.status !== 200) {
       const { message } = await res.json();
       throw new Error(message);
     }
   };
 
-  const { handleFormSubmit, redirect, open, setOpen, message } = useHandleAuthorization({ path: "/dashboard", funct: login });
-
-  useEffect(() => redirect(), []);
+  const { handleFormSubmit, open, setOpen, message } = useHandleAuthorization({ path: "/dashboard", funct: login });
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -50,9 +45,9 @@ const Login = () => {
         <Grid container className={classes.box}>
           <Grid item container xs={9}>
             <Grid container>
-              <p className={classes.welcome} component="h1" variant="h5">
+              <Typography className={classes.welcome} component="h1" variant="h5">
                 Welcome back!
-                </p>
+                </Typography>
             </Grid>
             <Grid>
               <Formik

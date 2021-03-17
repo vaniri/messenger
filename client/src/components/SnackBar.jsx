@@ -21,7 +21,6 @@ const SnackBar = ({ setOpen, open, message }) => {
             onClose={handleClose}
             message={message}
             action={
-            <React.Fragment>
                 <IconButton
                 size="small"
                 aria-label="close"
@@ -30,7 +29,6 @@ const SnackBar = ({ setOpen, open, message }) => {
                 >
                 <CloseIcon fontSize="small" />
                 </IconButton>
-            </React.Fragment>
             }
             />
         </Grid>

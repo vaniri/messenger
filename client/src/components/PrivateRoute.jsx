@@ -12,7 +12,8 @@ const PrivateRoute = ({ component: Component, path, ...rest }) => {
 
         if (res.status === 200) {
             setSignedIn(true);
-            setUserInfo(await res.json());
+            const userData = await res.json();
+            setUserInfo(userData);
         } else {
             setSignedIn(false);
             history.push("/login");

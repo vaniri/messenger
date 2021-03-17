@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
+import PublicRoute from "./components/PublicRoute";
 
 import "./App.css";
 
@@ -13,8 +14,8 @@ const App = () => {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <Route path="/login" component={Login} />
-      <Route path="/signup" component={Signup} />
+      <PublicRoute path="/login" component={Login} />
+      <PublicRoute path="/signup" component={Signup} />
       <PrivateRoute path="/dashboard" component={Dashboard} />
       <Route exact path="/">
         <Redirect to="/signup" />
