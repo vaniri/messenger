@@ -1,8 +1,5 @@
-const express = require("express");
-const router = express.Router();
+const router = require('express').Router();
 
-router.get("/welcome", function (req, res, next) {
-  res.status(200).send({ welcomeMessage: "Welcome!" });
-});
+router.use('/user', require('./user'));
 
 module.exports = router;
