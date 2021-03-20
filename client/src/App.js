@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
+import ChatBox from "./components/ChatBox";
 
 import "./App.css";
 
@@ -17,6 +18,7 @@ const App = () => {
       <PublicRoute path="/login" component={Login} />
       <PublicRoute path="/signup" component={Signup} />
       <PrivateRoute path="/dashboard" component={Dashboard} />
+      <PrivateRoute path="/chat" component={ChatBox} />
       <Route exact path="/">
         <Redirect to="/signup" />
       </Route>
