@@ -1,10 +1,10 @@
 const express = require('express');
 const router = require('express').Router();
 const argon2 = require('argon2');
-const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');
 const db = require('../models/tables');
-const { generateToken, getSecret } = require('../utils/utils');
-const { checkDuplicateErr } = require('./utils/utils');
+const { generateToken } = require('../utils/utils');
+const { checkDuplicateErr, checkCookieAuth } = require('./utils/utils');
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
@@ -23,7 +23,6 @@ router.post('/', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        console.log(req.body);
         let userRecord = await db.User.findOne({ where: { email: req.body.email } });
         if (!userRecord) {
             throw new Error("User not found");
@@ -61,11 +60,7 @@ router.post('/refresh', async (req, res) => {
     let userId = null;
 
     try {
-        const token = jwt.verify(req.cookies.token, getSecret());
-        userId = token.userId;
-        if (!userId) {
-            throw new Error("Invalid token");
-        }
+        userId = checkCookieAuth(req);
     } catch (err) {
         console.error(err);
         res.status(400).json({});
@@ -78,6 +73,24 @@ router.post('/refresh', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({});
+    }
+});
+
+router.get("/search", async (req, res) => {
+    try {
+        checkCookieAuth(req);
+    } catch (err) {
+        console.error(err);
+        res.status(400).json({});
+        return;
+    }
+
+    try {
+        const users = await db.User.findAll({ where: { username: { [Op.like]: `%${req.query.username}%` } } });
+        res.status(200).json(users);
+    } catch (err) {
+        console.error(err);
+        res.status(404).json({});
     }
 });
 
