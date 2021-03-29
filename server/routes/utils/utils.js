@@ -2,24 +2,35 @@ const { UniqueConstraintError } = require('sequelize');
 const jwt = require('jsonwebtoken');
 const { getSecret } = require('../../utils/utils');
 
-const checkDuplicateErr = (err, res) => {
-    if (err instanceof UniqueConstraintError) {
-        res.status(409);
-        res.send({ "message": "User already exists" });
-    } else {
-        res.status(500);
-        res.send({});
-    }
-}
+class AuthenticationError extends Error { };
 
 const checkCookieAuth = (req) => {
     const token = jwt.verify(req.cookies.token, getSecret());
-    userId = token.userId;
+    const userId = token.userId;
     if (!userId) {
-        throw new Error("Invalid token");
+        throw new AuthenticationError("Invalid token");
     }
-
     return userId;
 }
 
-module.exports = { checkDuplicateErr, checkCookieAuth };
+const wrapErrors = (func) => {
+    return async (req, res, next) => {
+        try {
+            await func(req, res);
+        } catch (err) {
+            next(err);
+        }
+    }
+}
+
+const getErrorStatusCode = (err) => {
+    if (err instanceof UniqueConstraintError) {
+        return 409;
+    } else if (err instanceof AuthenticationError) {
+        return 401;
+    } else {
+        return 500;
+    }
+}
+
+module.exports = { checkCookieAuth, wrapErrors, AuthenticationError, getErrorStatusCode };
