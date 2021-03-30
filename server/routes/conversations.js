@@ -59,23 +59,21 @@ const findConversation = (id1, id2) => {
     return db.Conversation.findOne({ where: { firstUserId, secondUserId } });
 }
 
-router.route('/message')
+router.route('/:convId')
     .post(wrapErrors(async (req, res) => {
         const userFrom = checkCookieAuth(req);
-        const conv = await findConversation(userFrom, req.body.receiverId);
         await db.Message.create({
             body: req.body.messageBody,
             seen: false,
             from: userFrom,
             to: req.body.receiverId,
-            conversationId: conv.id
+            conversationId: req.params.convId
         });
         res.status(201).json({});
     }))
     .get(wrapErrors(async (req, res) => {
-        const userFrom = checkCookieAuth(req);
-        const conv = await findConversation(userFrom, req.query.to);
-        const messages = await db.Message.findAll({ where: { conversationId: conv.id } });
+        checkCookieAuth(req);
+        const messages = await db.Message.findAll({ where: { conversationId: req.params.convId } });
         res.status(200).json({ messages });
     }));
 
