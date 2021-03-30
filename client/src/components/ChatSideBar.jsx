@@ -4,25 +4,25 @@ import SearchIcon from "@material-ui/icons/Search";
 import useChatPageStyle from "../components/useChatPageStyle";
 import LogOut from "../components/LogOut";
 
-const ChatSideBar = ({ userInfo, setSelectedUser, reportError }) => {
+const ChatSideBar = ({ userInfo, setSelectedConv, reportError }) => {
     const classes = useChatPageStyle();
-    const [users, setUsers] = useState([]);
+    const [convs, setConvs] = useState([]);
+    const [foundUsers, setFoundUsers] = useState([]);
     const [findUser, setFindUser] = useState("");
-
     const { username, userImage, userId } = userInfo;
 
     const handleUserSearchChange = event => {
         event.preventDefault();
         const { value } = event.target;
         setFindUser(value);
-        value.length ? searchUser(value) : getConversations();
+        if (value.length) { searchUser(value); }
     }
 
     const searchUser = async (username) => {
         const res = await fetch(`/user/search?username=${username}`);
         if (res.status === 200) {
             const users = await res.json();
-            setUsers(users);
+            setFoundUsers(users);
         } else {
             reportError("Error finding users")
         }
@@ -34,7 +34,7 @@ const ChatSideBar = ({ userInfo, setSelectedUser, reportError }) => {
             body: JSON.stringify({ username }),
             headers: { 'Content-Type': 'application/json' }
         });
-        if (res.status === 200) {
+        if (res.status === 201 || res.status === 204) {
             getConversations();
             setFindUser("");
         } else {
@@ -46,10 +46,11 @@ const ChatSideBar = ({ userInfo, setSelectedUser, reportError }) => {
         const res = await fetch("/conversations");
         if (res.status === 200) {
             const usersData = await res.json();
-            const usersArr = usersData.conversations.map(con => {
-                return con.firstUser.id !== userId ? con.firstUser : con.secondUser;
+            const convsArr = usersData.conversations.map(conv => {
+                const user = conv.firstUser.id !== userId ? conv.firstUser : conv.secondUser;
+                return { ...user, convId: conv.id };
             });
-            setUsers(usersArr);
+            setConvs(convsArr);
         } else {
             reportError("Error finding existing conversations");
         }
@@ -58,7 +59,7 @@ const ChatSideBar = ({ userInfo, setSelectedUser, reportError }) => {
     useEffect(() => getConversations(), []);
 
     return (
-        <Grid item xs={3} className={classes.borderRight500} style={{ border: 'none' }}>
+        <Grid item xs={12} sm={3} md={3} elevation={6} className={classes.borderRight500} style={{ border: 'none' }}>
             <Grid container>
                 <List style={{ width: '100%' }}>
                     <ListItem key={userId}>
@@ -101,19 +102,19 @@ const ChatSideBar = ({ userInfo, setSelectedUser, reportError }) => {
             </Grid>
             <Grid>
                 <List>
-                    {users.map(user => (
+                    {(findUser.length ? foundUsers : convs).map(conv => (
                         <ListItem button
-                            key={user.id}
+                            key={conv.id}
                             alignItems="flex-start"
-                            onClick={() => { findUser.length ? addUser(user.username) : setSelectedUser(user) }}>
+                            onClick={() => { findUser.length ? addUser(conv.username) : setSelectedConv(conv) }}>
                             <ListItemAvatar>
-                                <Avatar alt={"Remy Sharp"} src={user.image} />
+                                <Avatar alt={"Remy Sharp"} src={conv.image} />
                             </ListItemAvatar>
                             <ListItemText
-                                primary={user.username}
-                                secondary={user.message}
+                                primary={conv.username}
+                                secondary={conv.message}
                             ></ListItemText>
-                            <ListItemText secondary={user.status} align="right" >
+                            <ListItemText secondary={conv.status} align="right" >
                             </ListItemText>
                         </ListItem>
                     ))}

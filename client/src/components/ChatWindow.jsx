@@ -4,7 +4,7 @@ import SendIcon from '@material-ui/icons/Send';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import useChatPageStyle from "../components/useChatPageStyle";
 
-const ChatWindow = ({ userInfo, selectedUser, reportError }) => {
+const ChatWindow = ({ userInfo, selectedConv, reportError }) => {
     const classes = useChatPageStyle();
     const [messageBody, setMessageBody] = useState("");
     const [messages, setMessages] = useState([]);
@@ -17,9 +17,9 @@ const ChatWindow = ({ userInfo, selectedUser, reportError }) => {
 
     const sendMessage = async (event) => {
         event.preventDefault();
-        const res = await fetch("/conversations/message", {
+        const res = await fetch(`/conversations/${selectedConv.convId}`, {
             method: 'POST',
-            body: JSON.stringify({ messageBody, receiverId: selectedUser.id }),
+            body: JSON.stringify({ messageBody }),
             headers: { 'Content-Type': 'application/json' }
         });
         if (res.status === 201) {
@@ -31,11 +31,11 @@ const ChatWindow = ({ userInfo, selectedUser, reportError }) => {
     }
 
     const getMessages = async () => {
-        if (!selectedUser.id) {
+        if (!selectedConv.id) {
             return;
         }
 
-        const res = await fetch(`/conversations/message?to=${selectedUser.id}`);
+        const res = await fetch(`/conversations/${selectedConv.convId}`);
         if (res.status === 200) {
             const messagesData = await res.json();
             setMessages(messagesData.messages);
@@ -45,19 +45,19 @@ const ChatWindow = ({ userInfo, selectedUser, reportError }) => {
         }
     }
 
-    useEffect(() => getMessages(), [selectedUser]);
+    useEffect(() => getMessages(), [selectedConv]);
 
     return (
-        <Grid container item xs={9} className={classes.chatContainer}>
+        <Grid container item xs={12} sm={9} md={9} elevation={6} className={classes.chatContainer}>
             <Grid xs={12}>
-                {selectedUser.id ?
+                {selectedConv.id ?
                     <Grid xs={12} className={classes.friendUsernameContainer}>
                         <List>
                             <ListItem>
                                 <ListItemIcon>
                                     <Avatar alt={""} src={""} />
                                 </ListItemIcon>
-                                <ListItemText primary={selectedUser.username}></ListItemText>
+                                <ListItemText primary={selectedConv.username}></ListItemText>
                                 <ListItemIcon alignItemsFlexEnd="true"> <MoreHorizIcon /></ListItemIcon>
                             </ListItem>
                         </List>
@@ -71,7 +71,7 @@ const ChatWindow = ({ userInfo, selectedUser, reportError }) => {
                                     <Grid style={{ width: '100%' }}>
                                         <ListItemText
                                             className={classes.friendInfo}
-                                            primary={fromMyself ? userInfo.username : selectedUser.username}
+                                            primary={fromMyself ? userInfo.username : selectedConv.username}
                                         >
                                         </ListItemText>
                                         <ListItemText

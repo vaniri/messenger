@@ -7,7 +7,7 @@ import SnackBar from "../components/SnackBar";
 
 const ChatComponent = ({ userInfo }) => {
     const classes = useChatPageStyle();
-    const [selectedUser, setSelectedUser] = useState({});
+    const [selectedConv, setSelectedConv] = useState({});
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -17,9 +17,9 @@ const ChatComponent = ({ userInfo }) => {
     };
 
     return (
-        <Grid container xs={12} className={classes.root}>
-            <ChatSideBar userInfo={userInfo} setSelectedUser={setSelectedUser} reportError={reportError} />
-            <ChatWindow userInfo={userInfo} selectedUser={selectedUser} reportError={reportError} />
+        <Grid container item xs={12} sm={12} md={12} elevation={6} className={classes.root}>
+            <ChatSideBar userInfo={userInfo} setSelectedConv={setSelectedConv} reportError={reportError} />
+            <ChatWindow userInfo={userInfo} selectedConv={selectedConv} reportError={reportError} />
             <SnackBar
                 open={snackbarOpen}
                 setOpen={setSnackbarOpen}
