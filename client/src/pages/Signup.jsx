@@ -22,7 +22,7 @@ const Register = () => {
       throw new Error("User already exists");
     } else if (res.status !== 201) {
       const { message } = await res.json();
-      throw new Error(message);
+      throw new Error(message || "Unable to signup");
     }
   }
 

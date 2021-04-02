@@ -22,8 +22,7 @@ const Login = () => {
     if (res.status === 404 || res.status === 401) {
       throw new Error("Wrong credentials");
     } else if (res.status !== 200) {
-      const { message } = await res.json();
-      throw new Error(message);
+      throw new Error("Unable to login");
     }
   };
 

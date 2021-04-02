@@ -4,9 +4,9 @@ import { MuiThemeProvider } from "@material-ui/core";
 import { theme } from "./themes/theme.js";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
+import ChatComponent from "./pages/Chat";
 
 import "./App.css";
 
@@ -16,7 +16,7 @@ const App = () => {
     <MuiThemeProvider theme={theme}>
       <PublicRoute path="/login" component={Login} />
       <PublicRoute path="/signup" component={Signup} />
-      <PrivateRoute path="/dashboard" component={Dashboard} />
+      <PrivateRoute path="/dashboard" component={ChatComponent} />
       <Route exact path="/">
         <Redirect to="/signup" />
       </Route>
