@@ -3,6 +3,7 @@ import { Grid, TextField, InputAdornment, IconButton, List, ListItem, ListItemIc
 import SendIcon from '@material-ui/icons/Send';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import useChatPageStyle from "../components/useChatPageStyle";
+import socketIOClient from "socket.io-client";
 
 const ChatWindow = ({ userInfo, selectedConv, reportError }) => {
     const classes = useChatPageStyle();
@@ -46,6 +47,12 @@ const ChatWindow = ({ userInfo, selectedConv, reportError }) => {
     }
 
     useEffect(() => getMessages(), [selectedConv]);
+    useEffect(() => {
+        const socket = socketIOClient("/");
+        socket.on("IncomingMessage", msg => {
+            setMessages([...messages, msg]);
+        });
+    }, []);
 
     return (
         <Grid container item xs={12} sm={9} md={9} elevation={6} className={classes.chatContainer}>
