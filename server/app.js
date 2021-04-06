@@ -5,6 +5,8 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const path = require("path");
 const { json, urlencoded } = require("express");
+const { getErrorStatusCode } = require("./routes/utils/utils");
+
 const app = express();
 
 app.use(logger("dev"));
@@ -28,8 +30,8 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
-  res.json({ error: err });
+  res.status(getErrorStatusCode(err));
+  res.json({});
 });
 
 module.exports = app;
