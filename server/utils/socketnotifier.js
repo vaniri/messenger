@@ -1,15 +1,23 @@
 let users2sockets = {};
 
-const addSocket = (socket, userId) => { users2sockets[userId] = socket; };
-const removeSocket = (userId) => { delete users2sockets[userId]; }
+const addSocket = (socket, userId) => { 
+    if (users2sockets[userId]) {
+        users2sockets[userId].push(socket);
+    } else {
+        users2sockets[userId] = [socket];
+    }
+};
+const removeSocket = (socket, userId) => { 
+    users2sockets[userId] = users2sockets[userId].filter(otherSocket => otherSocket !== socket); 
+}
 
 const notifyUser = (userId, data) => {
-    const socket = users2sockets[userId];
-    if (!socket) {
+    const sockets = users2sockets[userId];
+    if (!sockets) {
         return;
     }
 
-    socket.emit("IncomingMessage", data);
+    sockets.forEach(socket => socket.emit("IncomingMessage", data));
 };
 
 module.exports = { addSocket, removeSocket, notifyUser };

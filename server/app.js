@@ -59,7 +59,7 @@ io.on("connection", (socket) => {
   addSocket(socket, socket.userId);
   socket.on("disconnect", () => {
     console.log(`client ${socket.userId} disconnected`);
-    removeSocket(socket.userId);
+    removeSocket(socket, socket.userId);
   });
 });
 
