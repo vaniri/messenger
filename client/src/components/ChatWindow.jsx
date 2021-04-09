@@ -49,10 +49,11 @@ const ChatWindow = ({ userInfo, selectedConv, reportError }) => {
     useEffect(() => getMessages(), [selectedConv]);
     useEffect(() => {
         const socket = socketIOClient("/");
-        socket.on("IncomingMessage", msg => {
-            setMessages([...messages, msg]);
-        });
-    }, []);
+        socket.on("IncomingMessage", msg => { setMessages([...messages, msg]); });
+        return () => {
+            if (socket.connected) { socket.disconnect(); }
+        };
+    }, [messages]);
 
     return (
         <Grid container item xs={12} sm={9} md={9} elevation={6} className={classes.chatContainer}>
