@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Grid, TextField, Typography, List, ListItem, ListItemIcon, ListItemAvatar, ListItemText, Avatar, InputAdornment } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import useChatPageStyle from "../components/useChatPageStyle";
 import LogOut from "../components/LogOut";
 
@@ -42,15 +43,12 @@ const ChatSideBar = ({ userInfo, setSelectedConv, reportError }) => {
         }
     }
 
-    const getConversations = async () => {
+    const getConversations = async () => {  
         const res = await fetch("/conversations");
         if (res.status === 200) {
-            const usersData = await res.json();
-            const convsArr = usersData.conversations.map(conv => {
-                const user = conv.firstUser.id !== userId ? conv.firstUser : conv.secondUser;
-                return { ...user, convId: conv.id };
-            });
-            setConvs(convsArr);
+            const { usersData } = await res.json();
+            console.log(usersData)
+            setConvs(usersData);
         } else {
             reportError("Error finding existing conversations");
         }
@@ -114,7 +112,8 @@ const ChatSideBar = ({ userInfo, setSelectedConv, reportError }) => {
                                 primary={conv.username}
                                 secondary={conv.message}
                             ></ListItemText>
-                            <ListItemText secondary={conv.status} align="right" >
+                            <ListItemText style={{ textAlign: "right"}} >
+                                <FiberManualRecordIcon className={conv.isOnline ? classes.online : classes.offline} />
                             </ListItemText>
                         </ListItem>
                     ))}

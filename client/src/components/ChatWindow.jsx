@@ -50,8 +50,8 @@ const ChatWindow = ({ userInfo, selectedConv, reportError }) => {
     useEffect(() => {
         const socket = socketIOClient("/");
         socket.on("IncomingMessage", msg => { setMessages([...messages, msg]); });
-        return () => {
-            if (socket.connected) { socket.disconnect(); }
+        return () => { 
+            if (socket.connected) { socket.disconnect(); } 
         };
     }, [messages]);
 
