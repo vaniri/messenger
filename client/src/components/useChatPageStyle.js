@@ -91,6 +91,16 @@ const useChatPageStyle = makeStyles(theme => ({
     },
     friendInfo: {
         color: '#888888'
+    }, 
+    online: {
+        color: 'green',
+        textAlign: "right",
+        fontSize: "medium"
+    },
+    offline: {
+        color: 'red',
+        textAlign: "right",
+        fontSize: "medium"
     }
 }));
 
