@@ -53,7 +53,7 @@ router.get("/search", wrapErrors(async (req, res) => {
     res.status(200).json(users);
 }));
 
-router.get('/:id', wrapErrors(async (req, res) => {
+router.get('/byId/:id', wrapErrors(async (req, res) => {
     let user = await db.User.findOne({ where: { id: req.params.id } });
     delete user.password;
     res.json({ user });

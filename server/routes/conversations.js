@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const db = require('../models/tables');
 const { checkCookieAuth, wrapErrors } = require('./utils/utils');
-const { notifyUser } = require('../utils/socketnotifier');
+const { notifyUser, hasSockets } = require('../utils/socketnotifier');
+const { findFriendsConv } = require('../models/utils');
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
@@ -33,25 +34,8 @@ router.route("/")
     }))
     .get(wrapErrors(async (req, res) => {
         const userId = checkCookieAuth(req);
-        let conversations = await db.Conversation.findAll({
-            where: {
-                [Op.or]: [
-                    { firstUserId: userId },
-                    { secondUserId: userId }
-                ]
-            },
-            include: [
-                { model: db.User, as: 'firstUser' },
-                { model: db.User, as: 'secondUser' }
-            ],
-            raw: true,
-            nest: true
-        });
-        conversations.forEach(con => {
-            delete con.firstUser.password;
-            delete con.secondUser.password;
-        });
-        res.status(200).json({ conversations });
+        const usersData = await findFriendsConv(userId);
+        res.status(200).json({ usersData });
     }));
 
 router.route('/:convId')
@@ -65,7 +49,7 @@ router.route('/:convId')
         });
         const convId = await db.Conversation.findOne({ where: { id: req.params.convId } });
         const receiverId = convId.firstUserId === userFrom ? convId.secondUserId : convId.firstUserId;
-        notifyUser(receiverId, message);
+        notifyUser(receiverId, "IncomingMessage", message);
         res.status(201).json({});
     }))
     .get(wrapErrors(async (req, res) => {

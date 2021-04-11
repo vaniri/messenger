@@ -9,8 +9,9 @@ const { json, urlencoded } = require("express");
 const { getErrorStatusCode, checkCookieAuth } = require("./routes/utils/utils");
 const http = require("http");
 const socketIo = require("socket.io");
-
-const { addSocket, removeSocket } = require("./utils/socketnotifier");
+const { addSocket, removeSocket, hasSockets, notifyUser } = require("./utils/socketnotifier");
+const { findFriendsConv } = require('./models/utils');
+const { User } = require("./models/tables");
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use(function (req, res, next) {
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
+  console.error(err);
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
@@ -54,12 +56,22 @@ io.use((socket, next) => {
   }
 });
 
-io.on("connection", (socket) => {
-  console.log(`client ${socket.userId} connected`);
+const notifyOnlineStatus = async (userId, isOnline) => {
+  if (!hasSockets(userId)) {
+    const convs = await findFriendsConv(userId);
+    convs.forEach(conv => notifyUser(conv.id, "UserStatus", { convId: conv.convId, isOnline }));
+  }
+};
+
+io.on("connection", async (socket) => {
+  console.log(`client ${socket.userId} connected ${socket.id}`);
+  notifyOnlineStatus(socket.userId, true);
   addSocket(socket, socket.userId);
+
   socket.on("disconnect", () => {
     console.log(`client ${socket.userId} disconnected`);
     removeSocket(socket, socket.userId);
+    notifyOnlineStatus(socket.userId, false);
   });
 });
 
