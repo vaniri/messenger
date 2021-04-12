@@ -81,10 +81,9 @@ const useChatPageStyle = makeStyles(theme => ({
         overflow: 'visible'
     },
     friendUsernameContainer: {
-        padding: '15px',
+        flexGrow: 1,
         boxShadow: '2px 2px 3px 0 #1111, 0 3px 10px 0 #E0E0E0',
         fontSize: '60px',
-        margin: '5px auto'
     },
     messageText: {
         padding: '20px'
@@ -101,7 +100,13 @@ const useChatPageStyle = makeStyles(theme => ({
         color: 'red',
         textAlign: "right",
         fontSize: "medium"
-    }
+    },
+      menuButton: {
+        marginRight: theme.spacing(2),
+      },
+      title: {
+        flexGrow: 1,
+      },
 }));
 
 export default useChatPageStyle;

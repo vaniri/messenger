@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Grid, TextField, InputAdornment, IconButton, List, ListItem, ListItemIcon, ListItemText, Avatar } from "@material-ui/core";
+import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
+import { Grid, TextField, InputAdornment, IconButton, List, ListItem, ListItemIcon, ListItemText, Avatar, AppBar, Toolbar } from "@material-ui/core";
 import SendIcon from '@material-ui/icons/Send';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import useChatPageStyle from "../components/useChatPageStyle";
-import socketIOClient from "socket.io-client";
 
-const ChatWindow = ({ userInfo, selectedConv, reportError }) => {
+const ChatWindow = forwardRef(({ userInfo, selectedConv, reportError }, ref) => {
     const classes = useChatPageStyle();
     const [messageBody, setMessageBody] = useState("");
     const [messages, setMessages] = useState([]);
@@ -47,29 +45,32 @@ const ChatWindow = ({ userInfo, selectedConv, reportError }) => {
     }
 
     useEffect(() => getMessages(), [selectedConv]);
-    useEffect(() => {
-        const socket = socketIOClient("/");
-        socket.on("IncomingMessage", msg => { setMessages([...messages, msg]); });
-        return () => { 
-            if (socket.connected) { socket.disconnect(); } 
-        };
-    }, [messages]);
+
+    useImperativeHandle(ref, () => ({
+        handleMessage: msg => {
+            if (msg.conversationId === selectedConv.convId) {
+                setMessages([...messages, msg]);
+            }
+        }
+    }));
 
     return (
         <Grid container item xs={12} sm={9} md={9} elevation={6} className={classes.chatContainer}>
             <Grid xs={12}>
                 {selectedConv.id ?
-                    <Grid xs={12} className={classes.friendUsernameContainer}>
-                        <List>
-                            <ListItem>
-                                <ListItemIcon>
-                                    <Avatar alt={""} src={""} />
-                                </ListItemIcon>
-                                <ListItemText primary={selectedConv.username}></ListItemText>
-                                <ListItemIcon alignItemsFlexEnd="true"> <MoreHorizIcon /></ListItemIcon>
-                            </ListItem>
-                        </List>
-                    </Grid> : ""}
+                    <AppBar position="sticky" color="default" className={classes.friendUsernameContainer}>
+                        <Toolbar>
+                            <List>
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <Avatar alt={""} src={""} />
+                                    </ListItemIcon>
+                                    <ListItemText primary={selectedConv.username}></ListItemText>
+                                    <ListItemIcon alignItemsFlexEnd="true"> </ListItemIcon>
+                                </ListItem>
+                            </List>
+                        </Toolbar>
+                    </AppBar> : ""}
                 <Grid ref={messagesRef} className={classes.messageArea}>
                     <List>
                         {messages.map(msg => {
@@ -108,6 +109,7 @@ const ChatWindow = ({ userInfo, selectedConv, reportError }) => {
                     noValidate
                 >
                     <TextField
+                        disabled={!selectedConv.id}
                         className={classes.textField}
                         id="outlined-basic-email"
                         value={messageBody}
@@ -135,6 +137,6 @@ const ChatWindow = ({ userInfo, selectedConv, reportError }) => {
             </Grid>
         </Grid >
     )
-}
+});
 
 export default ChatWindow;

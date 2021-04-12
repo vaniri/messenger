@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { IconButton } from "@material-ui/core";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
+
 const LogOut = () => {
     const history = useHistory();
 

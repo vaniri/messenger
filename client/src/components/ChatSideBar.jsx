@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import { Grid, TextField, Typography, List, ListItem, ListItemIcon, ListItemAvatar, ListItemText, Avatar, InputAdornment } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import useChatPageStyle from "../components/useChatPageStyle";
 import LogOut from "../components/LogOut";
 
-const ChatSideBar = ({ userInfo, setSelectedConv, reportError }) => {
+const ChatSideBar = forwardRef(({ userInfo, setSelectedConv, reportError }, ref) => {
     const classes = useChatPageStyle();
     const [convs, setConvs] = useState([]);
     const [foundUsers, setFoundUsers] = useState([]);
@@ -47,7 +47,6 @@ const ChatSideBar = ({ userInfo, setSelectedConv, reportError }) => {
         const res = await fetch("/conversations");
         if (res.status === 200) {
             const { usersData } = await res.json();
-            console.log(usersData)
             setConvs(usersData);
         } else {
             reportError("Error finding existing conversations");
@@ -55,6 +54,17 @@ const ChatSideBar = ({ userInfo, setSelectedConv, reportError }) => {
     }
 
     useEffect(() => getConversations(), []);
+
+    useImperativeHandle(ref, () => ({
+        handleStatus: userStatus => {
+            setConvs(convs.map(conv => {
+                if (conv.convId === userStatus.convId) {
+                    conv = { ...conv, isOnline: userStatus.isOnline };
+                }
+                return conv;
+            }));
+        }
+    }));
 
     return (
         <Grid item xs={12} sm={3} md={3} elevation={6} className={classes.borderRight500} style={{ border: 'none' }}>
@@ -121,6 +131,6 @@ const ChatSideBar = ({ userInfo, setSelectedConv, reportError }) => {
             </Grid>
         </Grid>
     );
-}
+});
 
 export default ChatSideBar;
