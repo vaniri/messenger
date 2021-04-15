@@ -32,7 +32,7 @@ const Register = () => {
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <GreetingSideBar classes={classes} />
-      <Grid item xs={12} sm={8} md={7} elevation={6} component={Paper} square>
+      <Grid container item xs={12} sm={8} md={7} elevation={6} component={Paper} square>
         <Grid className={classes.buttonHeader}>
           <ButtonHeader
             classes={classes}

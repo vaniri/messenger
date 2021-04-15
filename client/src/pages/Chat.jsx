@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Grid } from "@material-ui/core";
-import ChatSideBar from "../components/ChatSideBar";
+import ChatSideBarLogic from "../components/chatSideBarLogic";
 import ChatWindow from "../components/ChatWindow";
 import useChatPageStyle from "../components/useChatPageStyle";
 import SnackBar from "../components/SnackBar";
@@ -30,7 +30,7 @@ const ChatComponent = ({ userInfo }) => {
 
     return (
         <Grid container item xs={12} sm={12} md={12} elevation={6} className={classes.root}>
-            <ChatSideBar ref={sideBarRef} userInfo={userInfo} setSelectedConv={setSelectedConv} reportError={reportError} />
+            <ChatSideBarLogic ref={sideBarRef} userInfo={userInfo} setSelectedConv={setSelectedConv} reportError={reportError} />
             <ChatWindow ref={chatWinRef} userInfo={userInfo} selectedConv={selectedConv} reportError={reportError} />
             <SnackBar
                 open={snackbarOpen}

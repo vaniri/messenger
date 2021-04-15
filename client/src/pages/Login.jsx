@@ -32,7 +32,7 @@ const Login = () => {
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <GreetingSideBar classes={classes} />
-      <Grid item xs={9} sm={8} md={7} elevation={6} component={Paper} square>
+      <Grid container item xs={9} sm={8} md={7} elevation={6} component={Paper} square>
         <Grid className={classes.buttonHeader}>
           <ButtonHeader
             classes={classes}
@@ -42,7 +42,7 @@ const Login = () => {
           />
         </Grid>
         <Grid container className={classes.box}>
-          <Grid item container xs={9}>
+          <Grid container item  xs={9}>
             <Grid container>
               <Typography className={classes.welcome} component="h1" variant="h5">
                 Welcome back!
