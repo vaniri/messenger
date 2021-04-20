@@ -25,13 +25,18 @@ const useChatPageStyle = makeStyles(theme => ({
         borderRight: '1px solid #e0e0e0'
     },
     messageArea: {
+        overflowX: 'hidden',
         overflowY: 'auto',
         overscrollBehaviorY: 'contain',
         scrollSnapType: 'y proximity',
         height: '75vh',
-        maxHeight: '75vh'
+        maxHeight: '75vh',
+        width: '100%'
     },
     messageItem: {
+        [theme.breakpoints.down("xs")]: {
+            width: '60%',
+        },
         margin: '20px 0',
         width: '35%',
         '&:last-child': {
@@ -81,16 +86,27 @@ const useChatPageStyle = makeStyles(theme => ({
         overflow: 'visible'
     },
     friendUsernameContainer: {
-        flexGrow: 1,
+        [theme.breakpoints.down("xs")]: {
+            display: 'none'
+        },
+        padding: '15px',
         boxShadow: '2px 2px 3px 0 #1111, 0 3px 10px 0 #E0E0E0',
         fontSize: '60px',
+        margin: '5px auto',
     },
     messageText: {
+        [theme.breakpoints.down("xs")]: {
+            width: '100%',
+            overflow: 'hiden'
+        },
         padding: '20px'
     },
     friendInfo: {
+        [theme.breakpoints.down("xs")]: {
+            width: '100%'
+        },
         color: '#888888'
-    }, 
+    },
     online: {
         color: 'green',
         textAlign: "right",
@@ -101,12 +117,21 @@ const useChatPageStyle = makeStyles(theme => ({
         textAlign: "right",
         fontSize: "medium"
     },
-      menuButton: {
-        marginRight: theme.spacing(2),
-      },
-      title: {
+    nav: {
         flexGrow: 1,
-      },
+    },
+    menuButton: {
+        marginRight: theme.spacing(2),
+    },
+    title: {
+        flexGrow: 1,
+    },
+    list: {
+        width: 250,
+    },
+    fullList: {
+        width: 'auto',
+    },
 }));
 
 export default useChatPageStyle;

@@ -56,7 +56,7 @@ const ChatWindow = forwardRef(({ userInfo, selectedConv, reportError }, ref) => 
 
     return (
         <Grid container item xs={12} sm={9} md={9} elevation={6} className={classes.chatContainer}>
-            <Grid xs={12}>
+            <Grid container item xs={12}>
                 {selectedConv.id ?
                     <AppBar position="sticky" color="default" className={classes.friendUsernameContainer}>
                         <Toolbar>
@@ -102,7 +102,7 @@ const ChatWindow = forwardRef(({ userInfo, selectedConv, reportError }, ref) => 
                     </List>
                 </Grid>
             </Grid>
-            <Grid className={classes.formContainer} xs={12}>
+            <Grid container item className={classes.formContainer} xs={12}>
                 <form
                     onSubmit={(event) => sendMessage(event)}
                     className={classes.form}

@@ -1,78 +1,21 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef } from "react";
+import React from "react";
 import { Grid, TextField, Typography, List, ListItem, ListItemIcon, ListItemAvatar, ListItemText, Avatar, InputAdornment } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import useChatPageStyle from "../components/useChatPageStyle";
 import LogOut from "../components/LogOut";
 
-const ChatSideBar = forwardRef(({ userInfo, setSelectedConv, reportError }, ref) => {
+const ChatSideBar = ({ userInfo, findUser, convs, foundUsers, addUser, handleUserSearchChange, setSelectedConv }) => {
     const classes = useChatPageStyle();
-    const [convs, setConvs] = useState([]);
-    const [foundUsers, setFoundUsers] = useState([]);
-    const [findUser, setFindUser] = useState("");
     const { username, userImage, userId } = userInfo;
 
-    const handleUserSearchChange = event => {
-        event.preventDefault();
-        const { value } = event.target;
-        setFindUser(value);
-        if (value.length) { searchUser(value); }
-    }
-
-    const searchUser = async (username) => {
-        const res = await fetch(`/user/search?username=${username}`);
-        if (res.status === 200) {
-            const users = await res.json();
-            setFoundUsers(users);
-        } else {
-            reportError("Error finding users")
-        }
-    }
-
-    const addUser = async (username) => {
-        const res = await fetch("/conversations", {
-            method: 'PUT',
-            body: JSON.stringify({ username }),
-            headers: { 'Content-Type': 'application/json' }
-        });
-        if (res.status === 201 || res.status === 204) {
-            getConversations();
-            setFindUser("");
-        } else {
-            reportError(`Error adding ${username} to contacts`);
-        }
-    }
-
-    const getConversations = async () => {  
-        const res = await fetch("/conversations");
-        if (res.status === 200) {
-            const { usersData } = await res.json();
-            setConvs(usersData);
-        } else {
-            reportError("Error finding existing conversations");
-        }
-    }
-
-    useEffect(() => getConversations(), []);
-
-    useImperativeHandle(ref, () => ({
-        handleStatus: userStatus => {
-            setConvs(convs.map(conv => {
-                if (conv.convId === userStatus.convId) {
-                    conv = { ...conv, isOnline: userStatus.isOnline };
-                }
-                return conv;
-            }));
-        }
-    }));
-
     return (
-        <Grid item xs={12} sm={3} md={3} elevation={6} className={classes.borderRight500} style={{ border: 'none' }}>
+        <Grid>
             <Grid container>
                 <List style={{ width: '100%' }}>
                     <ListItem key={userId}>
                         <ListItemIcon>
-                            <Avatar alt={username} src={userImage} />
+                            <Avatar alt={""} src={""} />
                         </ListItemIcon>
                         <ListItemText primary={username}></ListItemText>
                         <LogOut />
@@ -109,13 +52,13 @@ const ChatSideBar = forwardRef(({ userInfo, setSelectedConv, reportError }, ref)
                 </form>
             </Grid>
             <Grid>
-                <List>
+                <List className={classes.friendsList}>
                     {(findUser.length ? foundUsers : convs).map(conv => (
                         <ListItem button
                             key={conv.id}
                             alignItems="flex-start"
                             onClick={() => { findUser.length ? addUser(conv.username) : setSelectedConv(conv) }}>
-                            <ListItemAvatar>
+                            <ListItemAvatar className>
                                 <Avatar alt={"Remy Sharp"} src={conv.image} />
                             </ListItemAvatar>
                             <ListItemText
@@ -131,6 +74,6 @@ const ChatSideBar = forwardRef(({ userInfo, setSelectedConv, reportError }, ref)
             </Grid>
         </Grid>
     );
-});
+};
 
 export default ChatSideBar;
