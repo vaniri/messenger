@@ -1,7 +1,12 @@
-# Express Starter
+## A one-to-one realtime chat app with React JS and Soket.IO.
 
-This starter repo will be used for building applications using React, Material-UI, React-Router, Node, & Express.js.
+## Getting Started with the App:
 
-## Getting started
+In the project directory just run:
 
-The project is broken down into a client and server folder.
+```sh
+npm install
+npm start
+```
+
+**Enjoy!**
